@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Microsoft.VisualBasic.CompilerServices;
@@ -35,18 +36,18 @@ namespace Prictice_1
             return Name + " " + Age;
         }
     }
-    class MyInt : IComparer
+    class MyInt<T> /*: IComparer<T>*/
     {
-        private Person[] arr;
+        private T[] arr;
         private int count;
-        private Person person;
+        private T person;
 
         public MyInt(int capacity)
         {
             count = 0;
-            arr = new Person[capacity];
+            arr = new T[capacity];
         }
-        public Person this[int ind]
+        public T this[int ind]
         {
             get
             {
@@ -57,7 +58,7 @@ namespace Prictice_1
                 arr[ind] = value;
             }
         }
-        public IEnumerator GetEnumerator()
+        private IEnumerator GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {
@@ -66,11 +67,11 @@ namespace Prictice_1
         }
         public int Capacity => arr.Length;
         public int Count => arr.Length;
-        public void Add(params Person[] person)
+        public void Add(params T[] person)
         {
             for (int i = 0; i < person.Length; i++)
             {
-                Person[] tmp = new Person[arr.Length + 1];
+                T[] tmp = new T[arr.Length + 1];
                 Array.Copy(arr, tmp, arr.Length);
                 arr = tmp;
                 arr[count] = person[i];
@@ -81,22 +82,23 @@ namespace Prictice_1
 
         public void Sort()
         {
-            Array.Sort(arr, 0, count, this);
+            Array.Sort(arr, 0, count/*, this*/);
         }
 
-        public int Compare(object x, object? y)
-        {
-            Person _x = (Person)x;
-            Person _y = (Person)y;
-            return _y.age.CompareTo(_x.age);
+        //public int Compare(object x, object? y)
+        //{
+        //    T _x = (T)x;
+        //    T _y = (T)y;
+        //    return _x.Equals(_y);
+        //    //return _y.age.CompareTo(_x.age);
 
-        }
+        //}
 
         public bool Contains(object item)
         {
             for (int i = 0; i < count; i++)
             {
-                if (arr[i] == (Person)item)
+                if (arr[i].Equals(item))
                 {
                     return true;
                 }
@@ -112,10 +114,10 @@ namespace Prictice_1
                 int k = 0;
                 for (int i = 0; i < count; i++)
                 {
-                    if (arr[i] == (Person)obj)
+                    if (arr[i].Equals(obj))
                     {
                         k = i;
-                        arr[i] = null;
+                        arr[i] = default;
                     }
                 }
 
@@ -129,16 +131,16 @@ namespace Prictice_1
 
         }
 
-        public MyInt Clone()
+        public MyInt<T> Clone()
         {
-            MyInt newarr = new MyInt(count);
+            MyInt<T> newarr = new MyInt<T>(count);
             newarr.Add(arr);
             return newarr;
         }
 
-        public void CopyTo(ref MyInt array, int arrayIndex)
+        public void CopyTo(ref MyInt<T> array, int arrayIndex)
         {
-            array = new MyInt(count);
+            array = new MyInt<T>(count);
             for (int i = arrayIndex; i < count; i++)
             {
                 array.Add(arr[i]);
@@ -149,17 +151,16 @@ namespace Prictice_1
         {
             for (int i = 0; i < arr.Length; i++)
             {
-                arr[i] = null;
+                arr[i] = default;
             }
-
             count = 0;
         }
 
-        public MyInt GetRange(int index, int count)
+        public MyInt<T> GetRange(int index, int count)
         {
-            MyInt newarr = new MyInt(this.count);
+            MyInt<T> newarr = new MyInt<T>(this.count);
 
-            for (int i = index; i < count; i++)
+            for (int i = index; i < index+count; i++)
             {
                 newarr[i] = arr[i];
             }
@@ -171,7 +172,7 @@ namespace Prictice_1
         {
             for (int i = startIndex; i < arr.Length; i++)
             {
-                if (arr[i] == (Person)value)
+                if (arr[i].Equals(value))
                 {
                     return i;
                 }
@@ -183,8 +184,8 @@ namespace Prictice_1
         public void Insert(int index, object value)
         {
             count++;
-            Person[] array = new Person[count];
-            array[index] = (Person)value;
+            T[] array = new T[count];
+            array[index] = (T)value;
 
             for (int i = 0; i < index; i++)
             {
@@ -204,68 +205,71 @@ namespace Prictice_1
     {
         static void Main(string[] args)
         {
-            MyInt arr = new MyInt(1);
+            MyInt<Person> arr = new MyInt<Person>(0);
             Person Igor = new Person("Igor", 20);
             Person Roman = new Person("Roman", 19);
             Person Stas = new Person("Stas", 21);
+            Person Poline = new Person("Poline", 19);
+            Person Ruslan = new Person("Ruslan", 20);
 
-            arr.Add(Igor, Roman, Stas);
+            arr.Add(Igor, Roman,Stas, Poline, Ruslan);
+            //arr.Add(Igor, Roman, Stas);
 
-            void Print(MyInt arr)
-            {
-                foreach (Person person in arr)
-                {
-                    WriteLine(person + " ");
-                }
-            }
+            //void Print(MyInt arr)
+            //{
+            //    foreach (Person person in arr)
+            //    {
+            //        WriteLine(person + " ");
+            //    }
+            //}
 
-            WriteLine(arr.Count + " " + arr.Capacity);
-            Print(arr);
+            //WriteLine(arr.Count + " " + arr.Capacity);
+            //Print(arr);
 
-            WriteLine("Sort");
-            arr.Sort();
-            Print(arr);
+            //WriteLine("Sort");
+            //arr.Sort();
+            //Print(arr);
 
-            WriteLine();
-            WriteLine("Contains " + arr.Contains(new Person("Igor", 10)));
-            arr.Remove(new Person("Isd", 20));
+            //WriteLine();
+            //WriteLine("Contains " + arr.Contains(new Person("Igor", 10)));
+            //arr.Remove(new Person("Isd", 20));
 
-            Print(arr);
+            //Print(arr);
 
-            WriteLine("clone ");
+            //WriteLine("clone ");
 
-            MyInt newarray = arr.Clone();
-            var array = arr.Clone();
-            Print(array);
+            //MyInt newarray = arr.Clone();
+            //var array = arr.Clone();
+            //Print(array);
 
-            arr.Clear();
-            WriteLine("Clear");
-            Print(arr);
-
-
-            arr.Add(Igor, Roman, Stas);
-            MyInt test = new MyInt(arr.Count);
-            arr.CopyTo(ref test, 2);
-            WriteLine("Copy to from 2");
-            Print(test);
+            //arr.Clear();
+            //WriteLine("Clear");
+            //Print(arr);
 
 
+            //arr.Add(Igor, Roman, Stas);
+            //MyInt test = new MyInt(arr.Count);
+            //arr.CopyTo(ref test, 2);
+            //WriteLine("Copy to from 2");
+            //Print(test);
 
-            WriteLine("Get Range");
-            MyInt GetRangeInt = arr.GetRange(1, 3);
 
-            Print(GetRangeInt);
 
-            WriteLine();
-            arr.Insert(0, new Person("Petr", 16));
+            //WriteLine("Get Range");
+            //MyInt GetRangeInt = arr.GetRange(1, 3);
 
-            Print(arr);
+            //Print(GetRangeInt);
 
-            int index = arr.IndexOf(new Person("Stas", 21), 1);
+            //WriteLine();
+            //arr.Insert(0, new Person("Petr", 16));
 
-            WriteLine(index);
-            /*Func<int, int, int> del = (x, y) => x * y;
-            WriteLine(del(3,1));*/
+            //Print(arr);
+
+            //int index = arr.IndexOf(new Person("Stas", 21), 1);
+
+            //WriteLine(index);
+            ///*Func<int, int, int> del = (x, y) => x * y;
+            //WriteLine(del(3,1));*/
         }
     }
 }
